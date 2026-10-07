@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kids Box 3 — Appearance / Want / Enjoy</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Nunito', 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh; padding: 20px; color: #fff;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 26px; }
+  .header h1 {
+    font-family: 'Fredoka One', cursive; font-size: 3rem;
+    background: linear-gradient(135deg,#f7971e,#ffd200);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .header .subtitle {
+    font-size: 1.15rem; color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.08); padding: 6px 26px;
+    border-radius: 40px; display: inline-block;
+    border: 1px solid rgba(255,255,255,0.1);
+    font-weight: 700; margin-top: 6px;
+  }
+
+  .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; flex-wrap: wrap; }
+  .tab-btn {
+    border: none; padding: 12px 22px; border-radius: 60px;
+    font-size: 0.9rem; font-weight: 800; font-family: 'Nunito', sans-serif;
+    cursor: pointer; background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s ease;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.12); color: #fff; transform: translateY(-2px); }
+  .tab-btn.active {
+    background: linear-gradient(135deg,#f7971e,#ffd200); color: #1a1a2e;
+    border-color: transparent; box-shadow: 0 8px 30px rgba(247,151,30,0.35);
+    transform: translateY(-2px);
+  }
+
+  .panel { display: none; animation: fadeSlide 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeSlide { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  .worksheet {
+    background: rgba(255,255,255,0.05);
+    border-radius: 32px;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    padding: 22px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  }
+
+  /* --- Сцена: картинка + поля поверх --- */
+  .img-stage {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .img-stage img {
+    width: 100%; display: block;
+    user-select: none; -webkit-user-drag: none;
+    pointer-events: none;
+  }
+
+  /* Инпуты поверх картинки */
+  .over-input {
+    position: absolute;
+    padding: 1px 8px;
+    border-radius: 8px;
+    border: 2px dashed #ffd200;
+    background: rgba(255,255,255,0.92);
+    color: #1a1a2e;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .over-input::placeholder { color: rgba(26,26,46,0.35); font-weight: 600; }
+  .over-input:focus { border-style: solid; box-shadow: 0 0 0 3px rgba(255,210,0,0.5); }
+
+  /* ===== Dream bubble ===== */
+  .dream {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+    background: #ffffff;
+    color: #1a1a2e;
+    padding: 16px 22px;
+    border-radius: 26px;
+    border: 4px dashed #ffd200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 6px rgba(255,210,0,0.6);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: clamp(15px, 1.7vw, 22px);
+    line-height: 1.3;
+    max-width: 36%;
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .dream .dream-title {
+    display: block;
+    font-size: 0.75em;
+    color: #ff7043;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    font-weight: 800;
+  }
+  .dream .dream-value {
+    display: block;
+    color: #1a1a2e;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.25em;
+    letter-spacing: 0.4px;
+  }
+  .dream::before,
+  .dream::after {
+    content: '';
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+    border: 4px dashed #ffd200;
+  }
+  .dream::before {
+    width: 22px; height: 22px;
+    bottom: -14px; left: 28px;
+  }
+  .dream::after {
+    width: 12px; height: 12px;
+    bottom: -30px; left: 14px;
+  }
+
+  /* Кнопки под сценой */
+  .btn-row {
+    display: flex; gap: 10px; justify-content: center;
+    margin-top: 20px; flex-wrap: wrap; align-items: center;
+  }
+  .btn {
+    border: none; padding: 12px 24px; border-radius: 60px;
+    font-size: 1rem; font-weight: 800; font-family: 'Nunito', sans-serif;
+    cursor: pointer; transition: all 0.25s cubic-bezier(0.175,0.885,0.32,1.275);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-glass {
+    background: rgba(255,255,255,0.06); color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-glass:hover { background: rgba(255,255,255,0.14); transform: translateY(-3px); }
+
+  /* Стрелки */
+  .arrow-btn {
+    border: none; width: 56px; height: 56px; border-radius: 50%;
+    font-size: 1.4rem; font-weight: 800; cursor: pointer;
+    background: linear-gradient(135deg,#f7971e,#ffd200); color: #1a1a2e;
+    box-shadow: 0 8px 30px rgba(247,151,30,0.35);
+    transition: all 0.25s cubic-bezier(0.175,0.885,0.32,1.275);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin: 0 6px;
+  }
+  .arrow-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 40px rgba(247,151,30,0.6); }
+  .arrow-btn:active { transform: scale(0.95); }
+
+  .feedback {
+    text-align: center; font-size: 1.1rem; font-weight: 700;
+    min-height: 2.5rem; padding: 10px; border-radius: 40px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+    margin: 15px auto 0; max-width: 700px;
+  }
+  .feedback .hint { color: #ffd200; }
+
+  .footer-note {
+    text-align: center; margin-top: 25px; color: rgba(255,255,255,0.25);
+    font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 18px;
+  }
+
+  @media (max-width: 700px) {
+    .header h1 { font-size: 2rem; }
+    .tab-btn { padding: 10px 14px; font-size: 0.78rem; }
+    .btn { padding: 10px 18px; font-size: 0.85rem; }
+    .over-input { font-size: 0.85rem; padding: 1px 6px; }
+    .dream { font-size: 0.95rem; padding: 10px 14px; border-width: 3px; max-width: 44%; }
+    .dream::before { width: 16px; height: 16px; bottom: -10px; left: 20px; border-width: 3px; }
+    .dream::after  { width: 9px;  height: 9px;  bottom: -20px; left: 10px; border-width: 3px; }
+    .arrow-btn { width: 46px; height: 46px; font-size: 1.15rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🎨 Appearance · Want · Enjoy</h1>
+    <span class="subtitle">Look at the picture and answer the questions</span>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="panel active" id="panel-aunt">
+    <div class="worksheet">
+      <div class="img-stage" id="stage-aunt">
+        <img src="aunt.png" alt="Aunt Stella" draggable="false">
+      </div>
+      <div class="btn-row">
+        <button class="arrow-btn" onclick="prevChar()" title="Previous">←</button>
+        <button class="btn btn-glass" onclick="resetPanel('aunt')">🔄 Reset</button>
+        <button class="arrow-btn" onclick="nextChar()" title="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-cousins">
+    <div class="worksheet">
+      <div class="img-stage" id="stage-cousins">
+        <img src="cousins.png" alt="Cousins" draggable="false">
+      </div>
+      <div class="btn-row">
+        <button class="arrow-btn" onclick="prevChar()" title="Previous">←</button>
+        <button class="btn btn-glass" onclick="resetPanel('cousins')">🔄 Reset</button>
+        <button class="arrow-btn" onclick="nextChar()" title="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-grandma">
+    <div class="worksheet">
+      <div class="img-stage" id="stage-grandma">
+        <img src="grandma.png" alt="Grandma Lucy" draggable="false">
+      </div>
+      <div class="btn-row">
+        <button class="arrow-btn" onclick="prevChar()" title="Previous">←</button>
+        <button class="btn btn-glass" onclick="resetPanel('grandma')">🔄 Reset</button>
+        <button class="arrow-btn" onclick="nextChar()" title="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-grandpa">
+    <div class="worksheet">
+      <div class="img-stage" id="stage-grandpa">
+        <img src="grandpa.png" alt="Grandpa Bill" draggable="false">
+      </div>
+      <div class="btn-row">
+        <button class="arrow-btn" onclick="prevChar()" title="Previous">←</button>
+        <button class="btn btn-glass" onclick="resetPanel('grandpa')">🔄 Reset</button>
+        <button class="arrow-btn" onclick="nextChar()" title="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-uncle">
+    <div class="worksheet">
+      <div class="img-stage" id="stage-uncle">
+        <img src="uncle.png" alt="Uncle Tom" draggable="false">
+      </div>
+      <div class="btn-row">
+        <button class="arrow-btn" onclick="prevChar()" title="Previous">←</button>
+        <button class="btn btn-glass" onclick="resetPanel('uncle')">🔄 Reset</button>
+        <button class="arrow-btn" onclick="nextChar()" title="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">✨ Interactive page for online lessons</div>
+</div>
+
+<script>
+/* =========================================================
+   ЗВУКИ (перелистывание / клик)
+   ========================================================= */
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  play(type) {
+    if (!this.ctx) return;
+    try {
+      if (type === 'click') {
+        // короткий мягкий "клик" — для листания
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.connect(g); g.connect(this.ctx.destination);
+        g.gain.value = 0.12;
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(880, this.ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.08);
+        o.start(this.ctx.currentTime);
+        o.stop(this.ctx.currentTime + 0.15);
+      } else if (type === 'reset') {
+        // мягкая "волна" при Reset
+        [523, 392, 262].forEach((f, i) => {
+          const o = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          o.connect(g); g.connect(this.ctx.destination);
+          g.gain.value = 0.1;
+          g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2 + i*0.08);
+          o.type = 'sine';
+          o.frequency.value = f;
+          o.start(this.ctx.currentTime + i * 0.08);
+          o.stop(this.ctx.currentTime + 0.2 + i * 0.08);
+        });
+      }
+    } catch(e) {}
+  }
+}
+const sound = new SoundFX();
+document.addEventListener('click', () => {
+  if (sound.ctx && sound.ctx.state === 'suspended') sound.ctx.resume();
+}, { once: true });
+
+/* =========================================================
+   КООРДИНАТЫ ПОЛЕЙ
+   ========================================================= */
+const BASE_W = 1012;
+const BASE_H = 1013;
+const OFF_X  = 8;
+const OFF_Y  = 7;
+
+const RAW = {
+  aunt: [
+    {x:434,y:678,w:518,h:38},{x:569,y:725,w:387,h:35},{x:413,y:768,w:547,h:39},
+    {x:389,y:816,w:569,h:39},{x:543,y:862,w:418,h:38},{x:624,y:906,w:343,h:40},
+    {x:618,y:955,w:345,h:33}
+  ],
+  cousins: [
+    {x:473,y:718,w:470,h:40},{x:488,y:768,w:458,h:29},{x:407,y:806,w:544,h:28},
+    {x:430,y:841,w:522,h:32},{x:524,y:879,w:428,h:31},{x:536,y:917,w:414,h:32},
+    {x:524,y:953,w:424,h:35}
+  ],
+  grandma: [
+    {x:422,y:623,w:541,h:49},{x:533,y:684,w:431,h:37},{x:400,y:731,w:570,h:34},
+    {x:382,y:778,w:589,h:40},{x:512,y:827,w:449,h:39},{x:585,y:872,w:380,h:40},
+    {x:574,y:919,w:391,h:42}
+  ],
+  grandpa: [
+    {x:439,y:614,w:482,h:48},{x:532,y:669,w:412,h:38},{x:408,y:718,w:532,h:38},
+    {x:394,y:759,w:540,h:41},{x:520,y:807,w:419,h:41},{x:600,y:856,w:327,h:38},
+    {x:582,y:906,w:336,h:32}
+  ],
+  uncle: [
+    {x:469,y:705,w:454,h:44},{x:569,y:756,w:356,h:31},{x:436,y:792,w:488,h:32},
+    {x:432,y:828,w:499,h:33},{x:552,y:864,w:380,h:35},{x:615,y:905,w:351,h:27},
+    {x:600,y:932,w:348,h:35}
+  ]
+};
+
+/* =========================================================
+   Персонажи + их мечта
+   ========================================================= */
+const CHARS = [
+  { key: 'aunt',    label: 'Aunt Stella',           dream: 'a teacher' },
+  { key: 'cousins', label: 'Cousins (Emma & Jack)', dream: 'a singer / a footballer' },
+  { key: 'grandma', label: 'Grandma Lucy',          dream: 'a writer' },
+  { key: 'grandpa', label: 'Grandpa Bill',          dream: 'a tourist' },
+  { key: 'uncle',   label: 'Uncle Tom',             dream: 'a vet' }
+];
+
+/* Вкладки */
+const tabsEl = document.getElementById('tabs');
+CHARS.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'tab-btn' + (i === 0 ? ' active' : '');
+  b.textContent = c.label;
+  b.dataset.key = c.key;
+  b.onclick = () => goToIndex(i);
+  tabsEl.appendChild(b);
+});
+
+/* Построение инпута */
+function makeInput(charKey, idx, rect) {
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'over-input';
+  inp.dataset.char = charKey;
+  inp.dataset.idx = idx;
+  inp.placeholder = '...';
+
+  const left = ((rect.x - OFF_X) / BASE_W * 100).toFixed(3);
+  const top  = ((rect.y - OFF_Y) / BASE_H * 100).toFixed(3);
+  const w    = (rect.w / BASE_W * 100).toFixed(3);
+  const h    = (rect.h / BASE_H * 100).toFixed(3);
+
+  inp.style.left   = left + '%';
+  inp.style.top    = top  + '%';
+  inp.style.width  = w    + '%';
+  inp.style.height = h    + '%';
+  inp.style.fontSize = 'clamp(13px, 1.5vw, 20px)';
+
+  return inp;
+}
+
+/* Раскладываем поля и облачко */
+CHARS.forEach(c => {
+  const stage = document.getElementById('stage-' + c.key);
+  const img = stage.querySelector('img');
+
+  function place() {
+    stage.querySelectorAll('.over-input').forEach(el => el.remove());
+    stage.querySelectorAll('.dream').forEach(el => el.remove());
+
+    RAW[c.key].forEach((rect, i) => {
+      stage.appendChild(makeInput(c.key, i, rect));
+    });
+
+    // Облачко-мечта
+    const dream = document.createElement('div');
+    dream.className = 'dream';
+    dream.innerHTML = `
+      <span class="dream-title">My dream</span>
+      <span class="dream-value">${c.dream}</span>
+    `;
+    stage.appendChild(dream);
+  }
+
+  if (img.complete && img.naturalWidth) place();
+  else img.addEventListener('load', place);
+  setTimeout(place, 200);
+});
+
+/* =========================================================
+   Reset (только он остался, Check и Show убраны)
+   ========================================================= */
+function resetPanel(key) {
+  const stage = document.getElementById('stage-' + key);
+  stage.querySelectorAll('.over-input').forEach(inp => {
+    inp.value = '';
+  });
+  sound.play('reset');
+}
+
+/* =========================================================
+   Листание стрелками ← → + звук
+   ========================================================= */
+function currentIndex() {
+  return CHARS.findIndex(c => document.getElementById('panel-' + c.key).classList.contains('active'));
+}
+
+function goToIndex(idx) {
+  if (idx < 0) idx = CHARS.length - 1;
+  if (idx >= CHARS.length) idx = 0;
+  const c = CHARS[idx];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + c.key).classList.add('active');
+  sound.play('click');
+}
+
+function nextChar() { goToIndex(currentIndex() + 1); }
+function prevChar() { goToIndex(currentIndex() - 1); }
+
+/* Клавиши ← → */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextChar();
+  if (e.key === 'ArrowLeft')  prevChar();
+});
+</script>
+</body>
+</html>
